@@ -2,7 +2,10 @@ import numpy
 import random
 import time
 
+
 class Life:
+    line = lambda s : [[(1 if (row == s//2 and spot in range(s//2-5,s//2+5)) else 0) for spot in range(s)] for row in range(s)]
+    glider = lambda s : [[(1 if (row == s//2 - 1 and spot == s//2) or (row == s//2 and spot == s//2 + 1) or (row == s//2 + 1 and spot in range(s//2-1,s//2+2)) else 0) for spot in range(s)] for row in range(s)]
     def __init__(self, s = 60, m = 1000, start = []):
         self.s = s
         self.m = m
@@ -23,10 +26,10 @@ class Life:
             for dy in (-1,0,1):
                 if dx == dy == 0:
                     continue
-                if x == self.s-1 or y == self.s-1:
-                    if x == self.s-1 and y != self.s-1:
+                if x +dx == self.s or y+dy == self.s:
+                    if x+dx == self.s and y+dy != self.s:
                         n+=self.old[0][y+dy]
-                    elif x != self.s-1 and y == self.s-1:
+                    elif x+dx != self.s and y+dy == self.s:
                         n+=self.old[x+dx][0]
                     else:
                         n+=self.old[0][0]
@@ -50,6 +53,7 @@ class Life:
                         grid+='■ '
                     else:
                         grid+='  '
+                    #grid+=str(self.live_n(x,y))
                 grid+='\n'
             print(grid)
             time.sleep(.5)
