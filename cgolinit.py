@@ -2,22 +2,16 @@ import numpy
 import random
 import time
 
-
 class Life:
     line = lambda s : [[(1 if (row == s//2 and spot in range(s//2-5,s//2+5)) else 0) for spot in range(s)] for row in range(s)]
     glider = lambda s : [[(1 if (row == s//2 - 1 and spot == s//2) or (row == s//2 and spot == s//2 + 1) or (row == s//2 + 1 and spot in range(s//2-1,s//2+2)) else 0) for spot in range(s)] for row in range(s)]
     def __init__(self, s = 60, m = 1000, start = []):
         self.s = s
         self.m = m
-        #self.old = numpy.zeros(s*s, dtype='i').reshape(s,s)
         self.new = numpy.zeros(s*s, dtype='i').reshape(s,s)
         if numpy.sum(start)>0:
             self.old = start
         else:
-            #for i in range(s):
-                #for j in range(s):
-                    #if(random.randint(0, 99) < 10):
-                       # self.old[i][j] = 1
             self.old = [[(1 if random.randint(0, 99) < 10 else 0) for spot in range(s)] for row in range(s)]
                     
     def live_n(self, x, y):
@@ -26,7 +20,7 @@ class Life:
             for dy in (-1,0,1):
                 if dx == dy == 0:
                     continue
-                if x +dx == self.s or y+dy == self.s:
+                if x+dx == self.s or y+dy == self.s:
                     if x+dx == self.s and y+dy != self.s:
                         n+=self.old[0][y+dy]
                     elif x+dx != self.s and y+dy == self.s:
@@ -45,7 +39,7 @@ class Life:
         4. Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
         '''
         t = 1 
-        while t <= self.m and numpy.sum(self.old) > 0:
+        while t <= self.m:
             grid = ''
             for x in range(self.s):
                 for y in range(self.s):
@@ -53,7 +47,6 @@ class Life:
                         grid+='■ '
                     else:
                         grid+='  '
-                    #grid+=str(self.live_n(x,y))
                 grid+='\n'
             print(grid)
             time.sleep(.5)
