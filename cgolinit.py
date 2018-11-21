@@ -1,11 +1,13 @@
 import numpy
 import random
 import time
+from math import inf
 
 class Life:
     line = lambda s : [[(1 if (row == s//2 and spot in range(s//2-5,s//2+5)) else 0) for spot in range(s)] for row in range(s)]
     glider = lambda s : [[(1 if (row == s//2 - 1 and spot == s//2) or (row == s//2 and spot == s//2 + 1) or (row == s//2 + 1 and spot in range(s//2-1,s//2+2)) else 0) for spot in range(s)] for row in range(s)]
-    def __init__(self, s = 60, m = 1000, start = []):
+    
+    def __init__(self, s = 60, m = inf, start = []):
         self.s = s
         self.m = m
         self.new = numpy.zeros(s*s, dtype='i').reshape(s,s)
@@ -49,6 +51,7 @@ class Life:
                         grid+='  '
                 grid+='\n'
             print(grid)
+            print("Generation",t)
             time.sleep(.5)
             print(chr(27) + "[2J")
             
