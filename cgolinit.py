@@ -3,18 +3,19 @@ import random
 import time
 
 class Life:
-    def __init__(self, s = 70, m = 1000, start = []):
+    def __init__(self, s = 60, m = 1000, start = []):
         self.s = s
         self.m = m
-        self.old = numpy.zeros(s*s, dtype='i').reshape(s,s)
+        #self.old = numpy.zeros(s*s, dtype='i').reshape(s,s)
         self.new = numpy.zeros(s*s, dtype='i').reshape(s,s)
         if numpy.sum(start)>0:
             self.old = start
         else:
-            for i in range(s):
-                for j in range(s):
-                    if(random.randint(0, 99) < 10):
-                        self.old[i][j] = 1
+            #for i in range(s):
+                #for j in range(s):
+                    #if(random.randint(0, 99) < 10):
+                       # self.old[i][j] = 1
+            self.old = [[(1 if random.randint(0, 99) < 10 else 0) for spot in range(s)] for row in range(s)]
                     
     def live_n(self, x, y):
         n = 0
@@ -23,9 +24,9 @@ class Life:
                 if dx == dy == 0:
                     continue
                 if x == self.s-1 or y == self.s-1:
-                    if x == self.s and y != self.s:
+                    if x == self.s-1 and y != self.s-1:
                         n+=self.old[0][y+dy]
-                    elif x != self.s and y == self.s:
+                    elif x != self.s-1 and y == self.s-1:
                         n+=self.old[x+dx][0]
                     else:
                         n+=self.old[0][0]
@@ -51,7 +52,7 @@ class Life:
                         grid+='  '
                 grid+='\n'
             print(grid)
-            time.sleep(.7)
+            time.sleep(.5)
             print(chr(27) + "[2J")
             
             for x in range(self.s):
@@ -70,15 +71,3 @@ class Life:
             self.old = self.new.copy()
             
             t+=1
-           
-            
-
-
-                        
-                        
-                    
-                    
-                        
-        
-              
-
