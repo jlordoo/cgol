@@ -1,20 +1,24 @@
-import numpy
 import random
 import time
 from math import inf
+from copy import deepcopy
 
 class Life:
-    line = lambda s : [[(1 if (row == s//2 and spot in range(s//2-5,s//2+5)) else 0) for spot in range(s)] for row in range(s)]
-    glider = lambda s : [[(1 if (row == s//2 - 1 and spot == s//2) or (row == s//2 and spot == s//2 + 1) or (row == s//2 + 1 and spot in range(s//2-1,s//2+2)) else 0) for spot in range(s)] for row in range(s)]
     
-    def __init__(self, s = 60, m = inf, start = []):
-        self.s = s
+    line = lambda r,c : [[(1 if (row == r//2 and spot in range(r//2-5,r//2+5)) else 0) for spot in range(c)] for row in range(r)]
+    glider = lambda r,c : [[(1 if (row == r//2 - 1 and spot == r//2) or (row == r//2 and spot == r//2 + 1) or (row == r//2 + 1 and spot in range(r//2-1,r//2+2)) else 0) for spot in range(c)] for row in range(r)]
+    
+    
+    def __init__(self, rows = 60, cols = 60, m = inf, speed = 0.3, percent = 10, start = []):
+        self.rows = rows
+        self.cols = cols
         self.m = m
-        self.new = numpy.zeros(s*s, dtype='i').reshape(s,s)
-        if numpy.sum(start)>0:
+        self.speed = speed
+        self.new = [[0 for cell in range(cols)] for row in range(rows)] 
+        if start:
             self.old = start
         else:
-            self.old = [[(1 if random.randint(0, 99) < 10 else 0) for spot in range(s)] for row in range(s)]
+            self.old = [[(1 if random.randint(0, 99) < percent else 0) for spot in range(cols)] for row in range(rows)]
                     
     def live_n(self, x, y):
         n = 0
@@ -22,10 +26,10 @@ class Life:
             for dy in (-1,0,1):
                 if dx == dy == 0:
                     continue
-                if x+dx == self.s or y+dy == self.s:
-                    if x+dx == self.s and y+dy != self.s:
+                if x+dx == self.rows or y+dy == self.cols:
+                    if x+dx == self.rows and y+dy != self.cols:
                         n+=self.old[0][y+dy]
-                    elif x+dx != self.s and y+dy == self.s:
+                    elif x+dx != self.rows and y+dy == self.cols:
                         n+=self.old[x+dx][0]
                     else:
                         n+=self.old[0][0]
@@ -40,23 +44,23 @@ class Life:
         3. Any live cell with more than three live neighbors dies, as if by overpopulation.
         4. Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
         '''
-        t = 1 
-        while t <= self.m:
+        g = 1 
+        while g <= self.m:
             grid = ''
-            for x in range(self.s):
-                for y in range(self.s):
+            for x in range(self.rows):
+                for y in range(self.cols):
                     if bool(self.old[x][y]):
                         grid+='■ '
                     else:
                         grid+='  '
                 grid+='\n'
             print(grid)
-            print("Generation",t)
-            time.sleep(.5)
+            print("Generation",g)
+            time.sleep(self.speed)
             print(chr(27) + "[2J")
             
-            for x in range(self.s):
-                for y in range(self.s):
+            for x in range(self.rows):
+                for y in range(self.cols):
                     alive = bool(self.old[x][y])
                     n = self.live_n(x,y)
                     if alive and n < 2:
@@ -68,6 +72,6 @@ class Life:
                     elif not alive and n == 3:
                         self.new[x][y] = 1
                     
-            self.old = self.new.copy()
+            self.old = deepcopy(self.new)
             
-            t+=1
+            g+=1
